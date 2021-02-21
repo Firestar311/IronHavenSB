@@ -29,84 +29,80 @@ import com.skycraft.skyblock.generators.EmptyChunkGenerator;
 
 public class CreateIsland {
 
-	@SuppressWarnings("deprecation")
-	public CreateIsland(Location loc, File file, Player p, Main plugin) throws WorldEditException, FileNotFoundException, IOException
-	{
-		
-		if (Bukkit.getWorld(p.getUniqueId().toString()) != null) {
-			
-			try {
-				
-				ClipboardFormat format = ClipboardFormats.findByFile(file);
-				World world = Bukkit.getWorld(p.getUniqueId().toString());
-				
-				try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+    @SuppressWarnings("deprecation")
+    public CreateIsland(Location loc, File file, Player p, Main plugin) throws WorldEditException, IOException {
 
-					Clipboard clipboard = reader.read();
+        if (Bukkit.getWorld(p.getUniqueId().toString()) != null) {
 
-					try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+            try {
 
-						Operation operation = new ClipboardHolder(clipboard)
-								.createPaste(editSession)
-								.to(BlockVector3.at(0, 80, 0))
-								.ignoreAirBlocks(false)
-								.build();
-						Operations.complete(operation);
+                ClipboardFormat format = ClipboardFormats.findByFile(file);
+                World world = Bukkit.getWorld(p.getUniqueId().toString());
 
-					}
+                try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
 
-				} 
-				p.teleport(new Location(Bukkit.getWorld(p.getUniqueId().toString()), 0, 81, 0));
-				
-			} catch (FileNotFoundException exc) {
-				
-				Bukkit.getLogger().severe("SEVERE ERROR DETECTED: Could not find island schematic!");
-				new DeleteIsland(Bukkit.getWorld(p.getUniqueId().toString()).getWorldFolder(), Bukkit.getWorld(p.getUniqueId().toString()), plugin, p);
-				
-			}
-			
-		} else {
-			try {
-				
-				ClipboardFormat format = ClipboardFormats.findByFile(file);
-				
-				WorldCreator wc = new WorldCreator(p.getUniqueId().toString());
-				wc.generator(new EmptyChunkGenerator());
-				wc.createWorld();
-				
-				World world = Bukkit.getWorld(p.getUniqueId().toString());
-				WorldBorder border = world.getWorldBorder();
-				border.setSize(51.0);
-				border.setCenter(0.0, 0.0);
-				
-				try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-					
-				   Clipboard clipboard = reader.read();
-				   
-				   try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
-					    
-					   Operation operation = new ClipboardHolder(clipboard)
-					            .createPaste(editSession)
-					            .to(BlockVector3.at(0, 80, 0))
-					            .ignoreAirBlocks(false)
-					            .build();
-					    Operations.complete(operation);
-					    
-					}
-				   
-				}
-				
-				p.teleport(new Location(Bukkit.getWorld(p.getUniqueId().toString()), 0, 81, 0));
-				
-			} catch (FileNotFoundException exc) {
-				
-				Bukkit.getLogger().severe("SEVERE ERROR DETECTED: Could not find island schematic!");
-				new DeleteIsland(Bukkit.getWorld(p.getUniqueId().toString()).getWorldFolder(), Bukkit.getWorld(p.getUniqueId().toString()), plugin, p);
-				
-			}
-			
-		}
-		
-	}
+                    Clipboard clipboard = reader.read();
+
+                    try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+
+                        Operation operation = new ClipboardHolder(clipboard)
+                                .createPaste(editSession)
+                                .to(BlockVector3.at(0, 80, 0))
+                                .ignoreAirBlocks(false)
+                                .build();
+                        Operations.complete(operation);
+
+                    }
+
+                }
+                p.teleport(new Location(Bukkit.getWorld(p.getUniqueId().toString()), 0, 81, 0));
+
+            } catch (FileNotFoundException exc) {
+
+                Bukkit.getLogger().severe("SEVERE ERROR DETECTED: Could not find island schematic!");
+                new DeleteIsland(Bukkit.getWorld(p.getUniqueId().toString()).getWorldFolder(), Bukkit.getWorld(p.getUniqueId().toString()), plugin, p);
+
+            }
+
+        } else {
+            try {
+
+                ClipboardFormat format = ClipboardFormats.findByFile(file);
+                WorldCreator wc = new WorldCreator("islands/" + p.getUniqueId());
+                wc.generator(new EmptyChunkGenerator());
+                World world = wc.createWorld();
+                WorldBorder border = world.getWorldBorder();
+                border.setSize(51.0);
+                border.setCenter(0.0, 0.0);
+
+                try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+
+                    Clipboard clipboard = reader.read();
+
+                    try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+
+                        Operation operation = new ClipboardHolder(clipboard)
+                                .createPaste(editSession)
+                                .to(BlockVector3.at(0, 80, 0))
+                                .ignoreAirBlocks(false)
+                                .build();
+                        Operations.complete(operation);
+
+                    }
+
+                }
+
+                p.teleport(new Location(Bukkit.getWorld(p.getUniqueId().toString()), 0, 81, 0));
+
+            } catch (FileNotFoundException exc) {
+
+                Bukkit.getLogger().severe("SEVERE ERROR DETECTED: Could not find island schematic!");
+                new DeleteIsland(Bukkit.getWorld(p.getUniqueId().toString()).getWorldFolder(), Bukkit.getWorld(p.getUniqueId().toString()), plugin, p);
+
+            }
+
+        }
+
+    }
 
 }

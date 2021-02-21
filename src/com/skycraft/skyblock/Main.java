@@ -29,14 +29,19 @@ public class Main extends JavaPlugin {
 	public static Economy econ;
 	public File DiamondMinedYML = new File(getDataFolder()+"/DiamondMined.yml");
     public FileConfiguration DiamondMinedConfig = YamlConfiguration.loadConfiguration(DiamondMinedYML);
+    public static File islandsFolder;
 	
 	@Override
 	public void onEnable() {
-		
 		if (!setupEconomy()) {
 			getLogger().severe("Disabled due to no Vault dependency found!");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
+		}
+		
+		islandsFolder = new File(Bukkit.getWorldContainer() + "/islands");
+		if (!islandsFolder.exists()) {
+			islandsFolder.mkdir();
 		}
 		
 		// Registering all the classes
